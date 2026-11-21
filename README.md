@@ -24,3 +24,20 @@ POST тексеру (Windows PowerShell):
 Set-Content -Path "$env:TEMP\good.json" -Value '{"name": "Aibek", "age": 19}'
 curl.exe -i -X POST http://127.0.0.1:8000/echo/ -H "Content-Type: application/json" --data "@$env:TEMP\good.json"
 ```
+## Практикалық жұмыс 3: Модельдер және SQLite
+
+Модель Task: title, description, status (todo / in_progress / done), created_at.
+
+Командалар:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+python manage.py shell
+```
+
+ORM мысалдары:
+```python
+Task.objects.create(title="...", status="todo")
+Task.objects.filter(status="done")
+Task.objects.order_by("created_at")
+```
