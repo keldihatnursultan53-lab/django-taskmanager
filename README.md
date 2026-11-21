@@ -41,3 +41,14 @@ Task.objects.create(title="...", status="todo")
 Task.objects.filter(status="done")
 Task.objects.order_by("created_at")
 ```
+## Практикалық жұмыс 4: Django Admin
+
+Командалар:
+```bash
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Админ панель: http://127.0.0.1:8000/admin/
+
+Task моделінде бағандар: title, status, created_at. Сүзгі: status. Іздеу: title.
