@@ -108,3 +108,34 @@ python manage.py migrate
 python manage.py runserver
 ```
 Админ панель: http://127.0.0.1:8000/admin/
+
+## Практикалық жұмыс 6: REST API және CRUD
+
+`Parcel` (жолдама) сущносы үшін Django view арқылы CRUD API жасалды (`JsonResponse`, DRF 7-аптада қосылады).
+
+| Әдіс | Маршрут | Сипаттама | Сәтті жауап | Қате |
+| --- | --- | --- | --- | --- |
+| GET | `/api/parcels/` | жолдамалар тізімі | 200 | |
+| POST | `/api/parcels/` | жолдама жасау | 201 | 400 |
+| GET | `/api/parcels/<id>/` | бір жолдама | 200 | 404 |
+| PUT | `/api/parcels/<id>/` | толық жаңарту | 200 | 400, 404 |
+| DELETE | `/api/parcels/<id>/` | өшіру | 204 | 404 |
+
+Міндетті өрістер: `sender`, `from_city`, `to_city`, `title`, `declared_contents`, `weight_kg`, `pickup_from`, `deliver_by`, `price`, `is_declaration_confirmed`. Қосымша: `size`, `allow_offers`, `handover_method`, `pickup_address`, `pickup_fee`.
+
+`sender` әзірге денеде беріледі, аутентификация қосылғанда (11-апта) ол токеннен алынады.
+
+POST денесінің мысалы:
+```json
+{
+  "sender": 2, "from_city": 1, "to_city": 2,
+  "title": "Gift box", "declared_contents": "A small gift",
+  "weight_kg": 1.5, "pickup_from": "2026-12-01T10:00:00+05:00",
+  "deliver_by": "2026-12-04T18:00:00+05:00",
+  "price": 4000, "is_declaration_confirmed": true
+}
+```
+
+HTTP статустары: 200 (сәтті), 201 (жасалды), 204 (өшірілді), 400 (қате деректер), 404 (табылмады), 405 (әдіске рұқсат жоқ).
+
+CSRF: API маршруттары `@csrf_exempt` арқылы босатылған, себебі кейін аутентификация токенмен (JWT) жүреді, ал CSRF қорғанысы cookie негізіндегі сеанстарға керек. Жобаның қалған бөліктерінде (Admin) `CsrfViewMiddleware` қосулы тұр.
