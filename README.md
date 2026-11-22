@@ -139,3 +139,32 @@ POST денесінің мысалы:
 HTTP статустары: 200 (сәтті), 201 (жасалды), 204 (өшірілді), 400 (қате деректер), 404 (табылмады), 405 (әдіске рұқсат жоқ).
 
 CSRF: API маршруттары `@csrf_exempt` арқылы босатылған, себебі кейін аутентификация токенмен (JWT) жүреді, ал CSRF қорғанысы cookie негізіндегі сеанстарға керек. Жобаның қалған бөліктерінде (Admin) `CsrfViewMiddleware` қосулы тұр.
+
+## Практикалық жұмыс 7: Django REST Framework
+
+API Django REST Framework-ке көшірілді. Маршруттар өзгерген жоқ, бірақ `JsonResponse` орнына сериализатор мен DRF generic view қолданылады.
+
+- `ParcelSerializer` (`delivery/serializers.py`): `ModelSerializer`, `Parcel` үшін. Өрістер типі мен міндеттілігі модельден алынады.
+- `ParcelListCreateView`: `GET` және `POST` `/api/parcels/`.
+- `ParcelDetailView`: `GET`, `PUT`, `PATCH`, `DELETE` `/api/parcels/<id>/`.
+
+| Әдіс | Маршрут | Сипаттама | Сәтті жауап | Қате |
+| --- | --- | --- | --- | --- |
+| GET | `/api/parcels/` | жолдамалар тізімі | 200 | |
+| POST | `/api/parcels/` | жолдама жасау | 201 | 400 |
+| GET | `/api/parcels/<id>/` | бір жолдама | 200 | 404 |
+| PUT | `/api/parcels/<id>/` | толық жаңарту | 200 | 400, 404 |
+| PATCH | `/api/parcels/<id>/` | жартылай жаңарту | 200 | 400, 404 |
+| DELETE | `/api/parcels/<id>/` | өшіру | 204 | 404 |
+
+Тексерулер: міндетті өрістер, `weight_kg > 0`, `price > 0`, `size` және `handover_method` мәндері, ондық сандардың өлшемі. `status` пен `created_at` тек оқуға арналған (клиент өзгерте алмайды).
+
+Қателер форматы: `{"өріс": ["хабарлама"]}`. Табылмаса: `404`, `{"detail": "..."}`.
+
+DRF Browsable API: серверді қосып, браузерде `http://127.0.0.1:8000/api/parcels/` ашыңыз.
+
+Орнату:
+```bash
+pip install -r requirements.txt
+python manage.py runserver
+```
