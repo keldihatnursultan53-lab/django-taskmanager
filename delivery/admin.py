@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import City, Delivery, LocationPing, Offer, Parcel, Payment, Profile, Trip
+from .models import City, Delivery, LocationPing, Offer, Parcel, Payment, Profile, Trip, TripStop
 
 
 @admin.register(City)
@@ -25,6 +25,12 @@ class ParcelAdmin(admin.ModelAdmin):
 class TripAdmin(admin.ModelAdmin):
     list_display = ("courier", "from_city", "to_city", "departure_at", "status")
     list_filter = ("status", "transport")
+
+
+@admin.register(TripStop)
+class TripStopAdmin(admin.ModelAdmin):
+    list_display = ("trip", "order", "city", "arrival_at")
+    list_filter = ("city",)
 
 
 @admin.register(Offer)

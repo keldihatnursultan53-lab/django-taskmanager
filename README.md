@@ -99,6 +99,8 @@ erDiagram
     OFFER |o--o{ DELIVERY : "leads to"
     DELIVERY ||--o| PAYMENT : "paid by"
     DELIVERY ||--o{ LOCATION_PING : "tracks"
+    DELIVERY ||--o| PAYMENT : "paid by"
+    DELIVERY ||--o{ LOCATION_PING : "tracks"
 ```
 
 ### Командалар
@@ -167,4 +169,22 @@ DRF Browsable API: серверді қосып, браузерде `http://127.0
 ```bash
 pip install -r requirements.txt
 python manage.py runserver
+
+## Практикалық жұмыс 8: Байланысты модельдер және API кеңейту
+
+Жобада 9 модель бар, олар `ForeignKey` және `OneToOne` арқылы байланысқан (ER-диаграмма жоғарыда). Бұл аптада `City`, `Trip` және жаңа `TripStop` (курьер маршрутындағы жол бойы қалалар) үшін API жасалды.
+
+| Әдіс | Маршрут | Сипаттама | Сәтті жауап | Қате |
+| --- | --- | --- | --- | --- |
+| GET | `/api/cities/` | қалалар тізімі | 200 | |
+| GET | `/api/cities/<id>/parcels/` | қаладан шығатын сәлемдемелер | 200 | 404 |
+| GET, POST | `/api/trips/` | сапарлар тізімі, сапар жасау | 200, 201 | 400 |
+| GET, PUT, PATCH, DELETE | `/api/trips/<id>/` | бір сапар | 200, 204 | 400, 404 |
+| GET, POST | `/api/trips/<id>/stops/` | сапардың жол бойы қалалары | 200, 201 | 400, 404 |
+
+Байланысты деректер жауапта көрінеді: сәлемдемеде `sender_username`, `from_city_name`, `to_city_name`; сапарда `courier_username`, қала аттары және ішкі `stops` тізімі.
+
+Жоқ id берілсе (мысалы, `"from_city": 999`), жауап `400` және `Invalid pk "999" - object does not exist.` Жоқ сапар немесе қала адресінде `404` қайтарылады.
+
+Тексерулер: `free_capacity_kg > 0`, сапардың бастапқы және соңғы қалалары әртүрлі, аялдама нөмірі сапар ішінде бірегей, аялдама бастапқы немесе соңғы қала болмайды.
 ```

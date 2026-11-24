@@ -185,3 +185,18 @@ class LocationPing(models.Model):
 
     def __str__(self):
         return f"{self.latitude}, {self.longitude}"
+
+class TripStop(models.Model):
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="stops")
+    city = models.ForeignKey(City, on_delete=models.PROTECT, related_name="trip_stops")
+    order = models.PositiveSmallIntegerField()
+    arrival_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["order"]
+        constraints = [
+            models.UniqueConstraint(fields=["trip", "order"], name="unique_stop_order_per_trip"),
+        ]
+
+    def __str__(self):
+        return f"Trip {self.trip_id}: {self.order}. {self.city}"
