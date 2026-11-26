@@ -188,3 +188,42 @@ python manage.py runserver
 
 Тексерулер: `free_capacity_kg > 0`, сапардың бастапқы және соңғы қалалары әртүрлі, аялдама нөмірі сапар ішінде бірегей, аялдама бастапқы немесе соңғы қала болмайды.
 ```
+## Практикалық жұмыс 9: Сүзу, іздеу, сұрыптау және пагинация
+
+`GET /api/parcels/` тізімі query-параметрлерді қабылдайды. Барлық тізімдер бетіне 5 жазбамен беріледі (`PAGE_SIZE = 5`).
+
+| Параметр | Мысал | Сипаттама |
+| --- | --- | --- |
+| `from_city` | `?from_city=1` | қала id бойынша шығу қаласы |
+| `to_city` | `?to_city=3` | қала id бойынша баратын қала |
+| `status` | `?status=open` | күй: `open`, `assigned`, `in_transit`, `delivered`, `cancelled` |
+| `size` | `?size=M` | өлшем: `S`, `M`, `L` |
+| `handover_method` | `?handover_method=courier_pickup` | тапсыру тәсілі |
+| `min_price`, `max_price` | `?min_price=3000&max_price=8000` | баға диапазоны |
+| `max_weight` | `?max_weight=3` | салмақ шегі (кг) |
+| `search` | `?search=gift` | `title` және `declared_contents` өрістерінде мәтін бойынша іздеу |
+| `ordering` | `?ordering=-price` | сұрыптау: `created_at`, `price`, `pickup_from`, `deliver_by`, `weight_kg`; `-` белгісі кему ретін береді |
+| `page` | `?page=2` | бет нөмірі (бетіне 5 жазба) |
+
+Параметрлерді біріктіруге болады:
+```
+/api/parcels/?from_city=1&min_price=5000&ordering=-price&page=1
+```
+
+Жауап пішімі:
+```json
+{
+  "count": 23,
+  "next": "http://127.0.0.1:8000/api/parcels/?page=2",
+  "previous": null,
+  "results": [ ... 5 сәлемдеме ... ]
+}
+```
+
+Қателер: жоқ бет `?page=99` → `404`; жоқ қала `?from_city=999` → `400`.
+
+`GET /api/trips/` тізімі де сүзуді (`from_city`, `to_city`, `status`, `transport`) және сұрыптауды (`departure_at`, `free_capacity_kg`, `created_at`) қолдайды.
+
+Тест деректер: `python seed_parcels.py` (20 сәлемдеме қосады, қайталап іске қосуға болады).
+
+Орнату: `pip install -r requirements.txt` (django-filter қосылды).
