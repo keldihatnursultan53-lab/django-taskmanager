@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticatedOrReadOnly  # 11-АПТА
 
 from .models import City, Parcel, Trip, TripStop
 from .serializers import CitySerializer, ParcelSerializer, TripSerializer, TripStopSerializer
@@ -9,11 +10,17 @@ from .serializers import CitySerializer, ParcelSerializer, TripSerializer, TripS
 class ParcelListCreateView(generics.ListCreateAPIView):
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]  # 11-АПТА
+
+    # 11-АПТА: жолдама жасалғанда жіберуші ретінде токен иесі жазылады
+    def perform_create(self, serializer):
+        serializer.save(sender=self.request.user)
 
 
 class ParcelDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]  # 11-АПТА
 
 
 class CityListView(generics.ListAPIView):
@@ -32,15 +39,18 @@ class CityParcelListView(generics.ListAPIView):
 class TripListCreateView(generics.ListCreateAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]  # 11-АПТА
 
 
 class TripDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]  # 11-АПТА
 
 
 class TripStopListCreateView(generics.ListCreateAPIView):
     serializer_class = TripStopSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]  # 11-АПТА
 
     def get_trip(self):
         return get_object_or_404(Trip, pk=self.kwargs["pk"])

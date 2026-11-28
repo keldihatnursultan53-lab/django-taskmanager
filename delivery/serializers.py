@@ -39,7 +39,8 @@ class ParcelSerializer(serializers.ModelSerializer):
             "status",
             "created_at",
         ]
-        read_only_fields = ["id", "status", "created_at"]
+        # 11-АПТА: "sender" қосылды, ол токеннен алынады
+        read_only_fields = ["id", "sender", "status", "created_at"]
         extra_kwargs = {
             "is_declaration_confirmed": {"required": True},
         }
